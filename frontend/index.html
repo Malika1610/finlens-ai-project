@@ -1,0 +1,4708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FinLens AI | Spider Web Multi-Agent Engine 🕷️</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        :root {
+            --bg-main: #05070f;
+            --bg-card: rgba(12, 18, 34, 0.94);
+            --bg-dark: #080c18;
+
+            --border-color: rgba(230, 36, 41, 0.4);
+
+            --accent-red: #e62429;
+            --accent-blue: #0066ff;
+            --accent-gold: #ffcc00;
+            --accent-web: #e2e8f0;
+            --accent-green: #00ffaa;
+
+            --text-primary: #f8fafc;
+            --text-muted: #94a3b8;
+
+            --box-shadow:
+                0 0 15px rgba(230, 36, 41, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family:
+                'Segoe UI',
+                system-ui,
+                -apple-system,
+                sans-serif;
+
+            background-color: var(--bg-main);
+
+            background-image:
+                radial-gradient(
+                    circle at 50% 50%,
+                    rgba(230, 36, 41, 0.12) 0%,
+                    transparent 60%
+                ),
+
+                repeating-radial-gradient(
+                    circle at 50% 50%,
+                    transparent 0,
+                    transparent 40px,
+                    rgba(0, 102, 255, 0.06) 41px,
+                    transparent 42px
+                ),
+
+                linear-gradient(
+                    0deg,
+                    transparent 49%,
+                    rgba(230, 36, 41, 0.04) 50%,
+                    transparent 51%
+                ),
+
+                linear-gradient(
+                    90deg,
+                    transparent 49%,
+                    rgba(230, 36, 41, 0.04) 50%,
+                    transparent 51%
+                );
+
+            background-size:
+                100% 100%,
+                300px 300px,
+                80px 80px,
+                80px 80px;
+
+            color: var(--text-primary);
+
+            margin: 0;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+
+            border-bottom: 2px solid var(--accent-red);
+
+            box-shadow:
+                0 4px 20px rgba(230, 36, 41, 0.3);
+        }
+
+        .brand {
+            font-size: 26px;
+            font-weight: 900;
+
+            color: white;
+
+            letter-spacing: 1px;
+
+            text-shadow:
+                0 0 10px rgba(230, 36, 41, 0.8);
+        }
+
+        .brand span {
+            color: var(--accent-blue);
+
+            text-shadow:
+                0 0 10px rgba(0, 102, 255, 0.8);
+        }
+
+        button {
+            padding: 9px 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #e62429,
+                    #990000
+                );
+
+            color: white;
+
+            border: none;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: 800;
+
+            transition: all 0.2s ease;
+
+            box-shadow:
+                0 0 12px rgba(230, 36, 41, 0.5);
+
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            opacity: 0.95;
+
+            box-shadow:
+                0 0 20px rgba(230, 36, 41, 0.8);
+        }
+
+        .tag {
+            background: rgba(255, 204, 0, 0.15);
+
+            border: 1px solid var(--accent-gold);
+
+            color: var(--accent-gold);
+
+            padding: 2px 8px;
+
+            border-radius: 4px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            margin-left: 6px;
+        }
+
+        .problem-section {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 20px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+
+            border:
+                1px solid var(--border-color);
+
+            border-radius: 12px;
+
+            padding: 16px;
+
+            box-shadow: var(--box-shadow);
+        }
+
+        .problem-card h4 {
+            margin:
+                0 0 8px 0;
+
+            color:
+                var(--accent-red);
+
+            font-size: 14px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+        }
+
+        .problem-card p {
+            margin: 0;
+
+            font-size: 12px;
+
+            color: var(--text-muted);
+
+            line-height: 1.5;
+        }
+
+        .controls-panel {
+            background: var(--bg-card);
+
+            border:
+                1px solid var(--border-color);
+
+            border-radius: 12px;
+
+            padding: 16px;
+
+            margin-bottom: 20px;
+
+            backdrop-filter: blur(8px);
+        }
+
+        .controls-row {
+            display: flex;
+
+            gap: 12px;
+
+            align-items: end;
+
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+
+            color:
+                var(--accent-gold);
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding:
+                8px 12px;
+
+            border-radius: 8px;
+
+            border:
+                1px solid var(--border-color);
+
+            background:
+                var(--bg-dark);
+
+            color: white;
+
+            font-size: 13px;
+
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color:
+                var(--accent-red);
+
+            box-shadow:
+                0 0 8px
+                rgba(230, 36, 41, 0.5);
+        }
+
+        .analyze-btn {
+            min-height: 36px;
+        }
+
+        #loader {
+            display: none;
+
+            text-align: center;
+
+            padding: 40px;
+
+            color:
+                var(--accent-gold);
+        }
+
+        #dashboardContainer {
+            display: none;
+        }
+
+        .tabs-nav {
+            display: flex;
+
+            gap: 8px;
+
+            margin-bottom: 16px;
+
+            border-bottom:
+                1px solid
+                rgba(255, 255, 255, 0.1);
+
+            padding-bottom: 8px;
+
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background:
+                var(--bg-dark);
+
+            border:
+                1px solid
+                var(--border-color);
+
+            color:
+                var(--text-muted);
+
+            padding:
+                8px 16px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            box-shadow: none;
+        }
+
+        .tab-btn.active {
+            background:
+                var(--accent-red);
+
+            color: white;
+
+            border-color:
+                var(--accent-red);
+
+            box-shadow:
+                0 0 10px
+                rgba(230, 36, 41, 0.5);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: grid;
+        }
+
+        .grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(12, 1fr);
+
+            gap: 20px;
+        }
+
+        .card {
+            background:
+                var(--bg-card);
+
+            border:
+                1px solid
+                var(--border-color);
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            backdrop-filter:
+                blur(8px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+
+            margin-bottom: 12px;
+        }
+
+        .col-3 {
+            grid-column:
+                span 3;
+        }
+
+        .col-4 {
+            grid-column:
+                span 4;
+        }
+
+        .col-6 {
+            grid-column:
+                span 6;
+        }
+
+        .col-8 {
+            grid-column:
+                span 8;
+        }
+
+        .col-12 {
+            grid-column:
+                span 12;
+        }
+
+        /* COMPANY HERO */
+
+        .company-header {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                flex-start;
+
+            gap: 20px;
+        }
+
+        .company-name {
+            font-size: 26px;
+
+            font-weight: 900;
+
+            margin-bottom: 5px;
+        }
+
+        .company-symbol {
+            color:
+                var(--accent-blue);
+
+            font-weight: 800;
+        }
+
+        .company-meta {
+            color:
+                var(--text-muted);
+
+            font-size: 12px;
+
+            line-height: 1.8;
+        }
+
+        .live-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            background:
+                rgba(0, 255, 170, 0.1);
+
+            color:
+                var(--accent-green);
+
+            border:
+                1px solid
+                rgba(0, 255, 170, 0.4);
+
+            padding:
+                5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background:
+                var(--accent-green);
+
+            box-shadow:
+                0 0 8px
+                var(--accent-green);
+        }
+
+        /* METRICS */
+
+        .metric-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 10px;
+
+            margin-top: 12px;
+        }
+
+        .metric-card {
+            background:
+                var(--bg-dark);
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            border:
+                1px solid
+                var(--border-color);
+
+            text-align: center;
+        }
+
+        .metric-title {
+            font-size: 10px;
+
+            color:
+                var(--text-muted);
+
+            font-weight: 700;
+
+            text-transform:
+                uppercase;
+        }
+
+        .metric-val {
+            font-size: 17px;
+
+            font-weight: bold;
+
+            margin-top: 5px;
+
+            color: white;
+        }
+
+        /* SPIDER SENSE */
+
+        .spider-sense {
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .sense-circle {
+            width: 125px;
+            height: 125px;
+
+            border-radius: 50%;
+
+            border:
+                7px solid
+                var(--accent-red);
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(230, 36, 41, 0.15),
+                    var(--bg-dark)
+                );
+
+            box-shadow:
+                0 0 25px
+                rgba(230, 36, 41, 0.45);
+
+            flex-shrink: 0;
+        }
+
+        .sense-number {
+            font-size: 35px;
+
+            font-weight: 900;
+
+            color:
+                var(--accent-gold);
+        }
+
+        .sense-label {
+            font-size: 9px;
+
+            color:
+                var(--text-muted);
+
+            font-weight: 800;
+        }
+
+        .sense-details {
+            flex: 1;
+        }
+
+        .sense-row {
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            padding:
+                7px 0;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.06);
+
+            font-size: 12px;
+        }
+
+        /* VERDICT */
+
+        .verdict-box {
+            display: flex;
+
+            align-items: center;
+
+            justify-content:
+                space-between;
+
+            background:
+                var(--bg-dark);
+
+            border-radius: 10px;
+
+            padding: 16px;
+
+            border-left:
+                6px solid
+                var(--accent-green);
+        }
+
+        .verdict-badge {
+            font-size: 28px;
+
+            font-weight: 900;
+        }
+
+        .BUY,
+        .STRONG {
+            color:
+                var(--accent-green);
+
+            text-shadow:
+                0 0 10px
+                rgba(0, 255, 170, 0.5);
+        }
+
+        .SELL,
+        .SHORT {
+            color:
+                var(--accent-red);
+
+            text-shadow:
+                0 0 10px
+                rgba(230, 36, 41, 0.5);
+        }
+
+        .HOLD {
+            color:
+                var(--accent-gold);
+        }
+
+        /* AGENTS */
+
+        .agent-flow {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            margin-top: 12px;
+        }
+
+        .agent-step {
+            background:
+                var(--bg-dark);
+
+            padding: 14px;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            border-left:
+                3px solid
+                var(--accent-blue);
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                flex-start;
+
+            gap: 15px;
+        }
+
+        .agent-name {
+            color:
+                var(--accent-blue);
+
+            font-weight: 800;
+        }
+
+        .agent-signal {
+            font-weight: 900;
+
+            margin-top: 4px;
+        }
+
+        .citation-tag {
+            background:
+                rgba(0, 102, 255, 0.2);
+
+            color:
+                var(--accent-web);
+
+            font-size: 10px;
+
+            padding:
+                3px 7px;
+
+            border-radius: 4px;
+
+            border:
+                1px solid
+                rgba(0, 102, 255, 0.4);
+
+            white-space: nowrap;
+        }
+
+        /* DNA */
+
+        .dna-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 10px;
+        }
+
+        .dna-card {
+            background:
+                var(--bg-dark);
+
+            border:
+                1px solid
+                var(--border-color);
+
+            border-radius: 10px;
+
+            padding: 15px;
+
+            text-align: center;
+        }
+
+        .dna-card small {
+            color:
+                var(--text-muted);
+
+            font-size: 10px;
+
+            text-transform:
+                uppercase;
+        }
+
+        .dna-card strong {
+            display: block;
+
+            margin-top: 7px;
+
+            font-size: 13px;
+
+            color:
+                var(--accent-gold);
+        }
+
+        /* RED FLAGS */
+
+        .flag {
+            padding: 12px;
+
+            background:
+                var(--bg-dark);
+
+            border-radius: 8px;
+
+            margin-bottom: 9px;
+
+            border-left:
+                4px solid
+                var(--accent-gold);
+        }
+
+        .flag.HIGH {
+            border-left-color:
+                var(--accent-red);
+        }
+
+        .flag.MEDIUM {
+            border-left-color:
+                var(--accent-gold);
+        }
+
+        .flag.LOW {
+            border-left-color:
+                var(--accent-green);
+        }
+
+        .flag-title {
+            font-weight: 800;
+
+            font-size: 13px;
+        }
+
+        .flag-detail {
+            color:
+                var(--text-muted);
+
+            font-size: 11px;
+
+            margin-top: 4px;
+        }
+
+        /* NEWS */
+
+        .news-item {
+            background:
+                var(--bg-dark);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.06);
+
+            border-radius: 8px;
+
+            padding: 12px;
+
+            margin-bottom: 9px;
+        }
+
+        .news-item a {
+            color:
+                var(--text-primary);
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 700;
+        }
+
+        .news-item a:hover {
+            color:
+                var(--accent-blue);
+        }
+
+        .news-publisher {
+            color:
+                var(--text-muted);
+
+            font-size: 10px;
+
+            margin-top: 5px;
+        }
+
+        /* SCENARIOS */
+
+        .scenario-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+        }
+
+        .scenario {
+            background:
+                var(--bg-dark);
+
+            border-radius: 10px;
+
+            padding: 15px;
+
+            border:
+                1px solid
+                var(--border-color);
+        }
+
+        .scenario h4 {
+            margin:
+                0 0 10px 0;
+        }
+
+        .scenario-price {
+            font-size: 24px;
+
+            font-weight: 900;
+
+            color:
+                var(--accent-green);
+        }
+
+        .scenario p {
+            color:
+                var(--text-muted);
+
+            font-size: 11px;
+
+            line-height: 1.5;
+        }
+
+        /* RISK */
+
+        .risk-number {
+            font-size: 34px;
+
+            font-weight: 900;
+
+            color:
+                var(--accent-green);
+
+            margin-top: 10px;
+        }
+
+        .risk-list {
+            list-style: none;
+
+            padding: 0;
+
+            margin: 0;
+        }
+
+        .risk-list li {
+            padding:
+                9px 0;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.06);
+
+            font-size: 13px;
+
+            color:
+                var(--text-muted);
+        }
+
+        .risk-list strong {
+            color: white;
+        }
+
+        /* SEC */
+
+        .sec-box {
+            background:
+                var(--bg-dark);
+
+            border:
+                1px dashed
+                var(--accent-red);
+
+            padding: 18px;
+
+            border-radius: 8px;
+        }
+
+        .sec-status {
+            display: inline-block;
+
+            padding:
+                5px 9px;
+
+            border-radius: 5px;
+
+            background:
+                rgba(0, 255, 170, 0.1);
+
+            color:
+                var(--accent-green);
+
+            border:
+                1px solid
+                rgba(0,255,170,0.3);
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            margin-bottom: 12px;
+        }
+
+        /* PASSPORT */
+
+        .passport {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(230,36,41,0.14),
+                    rgba(0,102,255,0.10)
+                );
+
+            border:
+                1px solid
+                var(--border-color);
+
+            border-radius: 10px;
+
+            padding: 18px;
+        }
+
+        .passport-row {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 10px;
+
+            margin-bottom: 10px;
+        }
+
+        .passport-item {
+            background:
+                var(--bg-dark);
+
+            padding: 10px;
+
+            border-radius: 7px;
+        }
+
+        .passport-item small {
+            display: block;
+
+            color:
+                var(--text-muted);
+
+            font-size: 9px;
+
+            text-transform:
+                uppercase;
+        }
+
+        .passport-item strong {
+            display: block;
+
+            margin-top: 4px;
+
+            font-size: 13px;
+        }
+
+        .download-btn {
+            margin-top: 12px;
+        }
+
+        /* CHAT */
+
+        .chat-box {
+            display: flex;
+
+            gap: 8px;
+
+            margin-top: 12px;
+        }
+
+        .chat-box input {
+            flex: 1;
+        }
+
+        .chat-answer {
+            margin-top: 12px;
+
+            padding: 13px;
+
+            background:
+                var(--bg-dark);
+
+            border-radius: 8px;
+
+            color:
+                var(--text-muted);
+
+            font-size: 12px;
+
+            line-height: 1.6;
+        }
+
+        /* EMPTY */
+
+        .empty {
+            color:
+                var(--text-muted);
+
+            font-size: 12px;
+
+            padding: 15px 0;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 900px) {
+
+            body {
+                padding: 14px;
+            }
+
+            .problem-section {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .col-3,
+            .col-4,
+            .col-6,
+            .col-8 {
+                grid-column:
+                    span 12;
+            }
+
+            .metric-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .dna-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .scenario-grid {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .company-header {
+                flex-direction:
+                    column;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- ========================================================= -->
+<!-- HEADER -->
+<!-- ========================================================= -->
+
+<div class="header">
+
+    <div class="brand">
+        FinLens
+        <span>Spider Web Engine</span>
+        🕷️
+    </div>
+
+    <button onclick="runAnalysis()">
+        Thwip Radar ⚡
+    </button>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PROBLEM SECTION -->
+<!-- ========================================================= -->
+
+<div class="problem-section">
+
+    <div class="problem-card">
+
+        <h4>
+            1. Disconnected Market Data
+        </h4>
+
+        <p>
+            FinLens connects technical momentum,
+            company fundamentals, news sentiment,
+            risk and regulatory evidence into one
+            investment intelligence graph.
+        </p>
+
+    </div>
+
+
+    <div class="problem-card">
+
+        <h4>
+            2. Evidence Before Claims
+        </h4>
+
+        <p>
+            Company information is retrieved dynamically
+            and SEC evidence is separated from model-generated
+            reasoning.
+        </p>
+
+    </div>
+
+
+    <div class="problem-card">
+
+        <h4>
+            3. Personalized Risk
+        </h4>
+
+        <p>
+            Position sizing adapts to capital,
+            investor profile, volatility and observed
+            drawdown.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CONTROLS -->
+<!-- ========================================================= -->
+
+<div class="controls-panel">
+
+    <div class="controls-row">
+
+        <div class="input-group">
+
+            <label>
+                Ticker Symbol
+            </label>
+
+            <input
+                type="text"
+                id="symbol"
+                value="AAPL"
+                style="width: 110px;"
+                placeholder="AAPL"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Risk Profile
+                <span class="tag">
+                    Persona
+                </span>
+            </label>
+
+            <select id="userProfile">
+
+                <option value="Conservative">
+                    Conservative (Low Risk)
+                </option>
+
+                <option
+                    value="Moderate"
+                    selected
+                >
+                    Moderate Growth
+                </option>
+
+                <option value="Aggressive">
+                    Aggressive (High Risk)
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Investment Horizon
+            </label>
+
+            <select id="timeHorizon">
+
+                <option value="Short-Term">
+                    Short-Term (1-30 Days)
+                </option>
+
+                <option
+                    value="Swing"
+                    selected
+                >
+                    Swing (1-6 Months)
+                </option>
+
+                <option value="Long-Term">
+                    Long-Term (1+ Years)
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Target Capital
+            </label>
+
+            <input
+                type="number"
+                id="allocationAmount"
+                value="10000"
+                min="1"
+                style="width: 130px;"
+            >
+
+        </div>
+
+
+        <button
+            class="analyze-btn"
+            onclick="runAnalysis()"
+        >
+            Analyze Company
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- LOADER -->
+<!-- ========================================================= -->
+
+<div id="loader">
+
+    <div style="font-size: 24px;">
+        🕷️
+    </div>
+
+    <br>
+
+    <strong>
+        Weaving financial intelligence web...
+    </strong>
+
+    <div
+        style="
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 8px;
+        "
+    >
+        Fetching market data → company fundamentals →
+        news → SEC evidence → multi-agent consensus
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- DASHBOARD -->
+<!-- ========================================================= -->
+
+<div id="dashboardContainer">
+
+
+    <!-- ===================================================== -->
+    <!-- TABS -->
+    <!-- ===================================================== -->
+
+    <div class="tabs-nav">
+
+        <button
+            class="tab-btn active"
+            onclick="switchTab('overviewTab', this)"
+        >
+            Executive Overview
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('companyTab', this)"
+        >
+            Company Intelligence
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('agentsTab', this)"
+        >
+            Multi-Agent Web Trace
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('riskTab', this)"
+        >
+            Risk & Sizing
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('ragTab', this)"
+        >
+            SEC Evidence
+        </button>
+
+        <button
+            class="tab-btn"
+            onclick="switchTab('labTab', this)"
+        >
+            FinLens Lab
+        </button>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- EXECUTIVE OVERVIEW -->
+    <!-- ===================================================== -->
+
+    <div
+        id="overviewTab"
+        class="tab-content active grid"
+    >
+
+
+        <!-- COMPANY HEADER -->
+
+        <div class="card col-12">
+
+            <div class="company-header">
+
+                <div>
+
+                    <div
+                        id="companyName"
+                        class="company-name"
+                    >
+                        Apple Inc.
+                    </div>
+
+                    <div
+                        id="companySymbol"
+                        class="company-symbol"
+                    >
+                        AAPL
+                    </div>
+
+                    <div
+                        id="companyMeta"
+                        class="company-meta"
+                    >
+                        Technology · Consumer Electronics
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div
+                        id="dataStatus"
+                        class="live-badge"
+                    >
+                        <span class="live-dot"></span>
+                        LIVE MARKET DATA
+                    </div>
+
+                    <div
+                        id="trustMini"
+                        style="
+                            margin-top:8px;
+                            text-align:right;
+                            font-size:10px;
+                            color:#94a3b8;
+                        "
+                    >
+                        Trust: --
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SPIDER SENSE -->
+
+        <div class="card col-6">
+
+            <h3>
+                🕷️ Spider Sense™
+            </h3>
+
+            <div class="spider-sense">
+
+                <div class="sense-circle">
+
+                    <div
+                        id="spiderSense"
+                        class="sense-number"
+                    >
+                        --
+                    </div>
+
+                    <div class="sense-label">
+                        INTELLIGENCE
+                    </div>
+
+                </div>
+
+
+                <div class="sense-details">
+
+                    <div class="sense-row">
+
+                        <span>
+                            Agent Consensus
+                        </span>
+
+                        <strong
+                            id="consensusVal"
+                        >
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="sense-row">
+
+                        <span>
+                            Trust Score
+                        </span>
+
+                        <strong
+                            id="trustScore"
+                        >
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="sense-row">
+
+                        <span>
+                            Market Weather
+                        </span>
+
+                        <strong
+                            id="weatherVal"
+                        >
+                            --
+                        </strong>
+
+                    </div>
+
+
+                    <div class="sense-row">
+
+                        <span>
+                            Risk
+                        </span>
+
+                        <strong
+                            id="senseRisk"
+                        >
+                            --
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VERDICT -->
+
+        <div class="card col-6">
+
+            <h3>
+                Consensus Decision Engine
+            </h3>
+
+            <div class="verdict-box">
+
+                <div>
+
+                    <div
+                        style="
+                            font-size:11px;
+                            color:#94a3b8;
+                        "
+                    >
+                        RECOMMENDED ACTION
+                    </div>
+
+                    <div
+                        id="verdictText"
+                        class="verdict-badge BUY"
+                    >
+                        BUY
+                    </div>
+
+                </div>
+
+
+                <div
+                    style="
+                        text-align:right;
+                    "
+                >
+
+                    <div
+                        style="
+                            font-size:11px;
+                            color:#94a3b8;
+                        "
+                    >
+                        CONFIDENCE
+                    </div>
+
+                    <div
+                        id="confidenceVal"
+                        style="
+                            font-size:24px;
+                            font-weight:bold;
+                            color:#0066ff;
+                        "
+                    >
+                        --%
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <p
+                id="portfolioImpact"
+                style="
+                    font-size:13px;
+                    margin-top:14px;
+                    color:#94a3b8;
+                    line-height:1.5;
+                "
+            ></p>
+
+        </div>
+
+
+        <!-- MARKET METRICS -->
+
+        <div class="card col-12">
+
+            <h3>
+                Real-Time Market Intelligence
+            </h3>
+
+            <div class="metric-grid">
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Current Price
+                    </div>
+
+                    <div
+                        id="priceVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Daily Change
+                    </div>
+
+                    <div
+                        id="changeVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Technical Trend
+                    </div>
+
+                    <div
+                        id="trendVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Sentiment
+                    </div>
+
+                    <div
+                        id="sentimentVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        RSI (14)
+                    </div>
+
+                    <div
+                        id="rsiVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Volatility
+                    </div>
+
+                    <div
+                        id="vixVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Max Drawdown
+                    </div>
+
+                    <div
+                        id="drawdownVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Market Cap
+                    </div>
+
+                    <div
+                        id="marketCapVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        P/E Ratio
+                    </div>
+
+                    <div
+                        id="peVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CHART -->
+
+        <div class="card col-12">
+
+            <h3>
+                Price Action & 20-Day SMA
+            </h3>
+
+            <canvas
+                id="priceChart"
+                height="90"
+            ></canvas>
+
+        </div>
+
+
+        <!-- RED FLAGS -->
+
+        <div class="card col-6">
+
+            <h3>
+                🚨 Red Flag Radar
+            </h3>
+
+            <div id="redFlags">
+                <div class="empty">
+                    Analyze a company to scan for risks.
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- FINANCIAL DNA -->
+
+        <div class="card col-6">
+
+            <h3>
+                🧬 Financial Health DNA
+            </h3>
+
+            <div
+                id="financialDNA"
+                class="dna-grid"
+            ></div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- COMPANY INTELLIGENCE -->
+    <!-- ===================================================== -->
+
+    <div
+        id="companyTab"
+        class="tab-content grid"
+    >
+
+
+        <div class="card col-8">
+
+            <h3>
+                🏢 Real Company Profile
+            </h3>
+
+            <div
+                id="companyDescription"
+                style="
+                    color:#cbd5e1;
+                    font-size:13px;
+                    line-height:1.7;
+                "
+            >
+                Analyze a ticker to retrieve company information.
+            </div>
+
+        </div>
+
+
+        <div class="card col-4">
+
+            <h3>
+                Company Snapshot
+            </h3>
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Sector
+                    </div>
+
+                    <div
+                        id="sectorVal"
+                        class="metric-val"
+                        style="font-size:13px;"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Industry
+                    </div>
+
+                    <div
+                        id="industryVal"
+                        class="metric-val"
+                        style="font-size:13px;"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Country
+                    </div>
+
+                    <div
+                        id="countryVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+
+                <div class="metric-card">
+
+                    <div class="metric-title">
+                        Employees
+                    </div>
+
+                    <div
+                        id="employeesVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card col-12">
+
+            <h3>
+                Fundamental Metrics
+            </h3>
+
+            <div class="metric-grid">
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Revenue Growth
+                    </div>
+                    <div
+                        id="revenueGrowthVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Earnings Growth
+                    </div>
+                    <div
+                        id="earningsGrowthVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Profit Margin
+                    </div>
+                    <div
+                        id="profitMarginVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Operating Margin
+                    </div>
+                    <div
+                        id="operatingMarginVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        ROE
+                    </div>
+                    <div
+                        id="roeVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Forward P/E
+                    </div>
+                    <div
+                        id="forwardPeVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Beta
+                    </div>
+                    <div
+                        id="betaVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Dividend Yield
+                    </div>
+                    <div
+                        id="dividendVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        52W High
+                    </div>
+                    <div
+                        id="high52Val"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        52W Low
+                    </div>
+                    <div
+                        id="low52Val"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Analyst Target
+                    </div>
+                    <div
+                        id="targetVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+
+                <div class="metric-card">
+                    <div class="metric-title">
+                        Exchange
+                    </div>
+                    <div
+                        id="exchangeVal"
+                        class="metric-val"
+                    >
+                        --
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- NEWS -->
+
+        <div class="card col-12">
+
+            <h3>
+                📰 Recent Company News
+            </h3>
+
+            <div id="newsList">
+                <div class="empty">
+                    News will appear after analysis.
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- AGENT TAB -->
+    <!-- ===================================================== -->
+
+    <div
+        id="agentsTab"
+        class="tab-content grid"
+    >
+
+        <div class="card col-12">
+
+            <h3>
+                🕸️ Multi-Agent Decision Web
+            </h3>
+
+            <p
+                style="
+                    font-size:12px;
+                    color:#94a3b8;
+                "
+            >
+                Each agent evaluates a different evidence dimension.
+                The orchestrator combines their outputs.
+            </p>
+
+            <div
+                id="agentChain"
+                class="agent-flow"
+            ></div>
+
+        </div>
+
+
+        <div class="card col-12">
+
+            <h3>
+                ⚔️ Agent Debate Arena
+            </h3>
+
+            <div
+                id="debateGrid"
+                class="scenario-grid"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- RISK TAB -->
+    <!-- ===================================================== -->
+
+    <div
+        id="riskTab"
+        class="tab-content grid"
+    >
+
+        <div class="card col-6">
+
+            <h3>
+                Recommended Allocation
+            </h3>
+
+            <div
+                id="posSizeCalc"
+                class="risk-number"
+            >
+                $0
+            </div>
+
+            <p
+                style="
+                    font-size:12px;
+                    color:#94a3b8;
+                "
+            >
+                Dynamic position sizing based on
+                capital, investor profile and observed
+                market risk.
+            </p>
+
+            <div
+                id="allocationPct"
+                style="
+                    color:#0066ff;
+                    font-weight:800;
+                "
+            >
+                --
+            </div>
+
+        </div>
+
+
+        <div class="card col-6">
+
+            <h3>
+                Risk Mitigation
+            </h3>
+
+            <ul
+                id="riskList"
+                class="risk-list"
+            ></ul>
+
+        </div>
+
+
+        <div class="card col-12">
+
+            <h3>
+                How Much Can I Lose?
+            </h3>
+
+            <input
+                type="range"
+                id="stressSlider"
+                min="1"
+                max="50"
+                value="10"
+                style="width:100%;"
+                oninput="updateStressTest()"
+            >
+
+            <div
+                style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-top:8px;
+                    font-size:12px;
+                    color:#94a3b8;
+                "
+            >
+                <span>
+                    Stress Scenario
+                </span>
+
+                <strong
+                    id="stressPercent"
+                >
+                    -10%
+                </strong>
+
+            </div>
+
+            <div
+                id="stressResult"
+                style="
+                    margin-top:15px;
+                    font-size:20px;
+                    font-weight:900;
+                    color:#e62429;
+                "
+            >
+                Potential loss: $0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- SEC TAB -->
+    <!-- ===================================================== -->
+
+    <div
+        id="ragTab"
+        class="tab-content grid"
+    >
+
+        <div class="card col-12">
+
+            <h3>
+                📄 SEC Evidence Chain
+            </h3>
+
+            <p
+                style="
+                    color:#94a3b8;
+                    font-size:12px;
+                "
+            >
+                Regulatory evidence is displayed separately
+                from market and model-derived signals.
+            </p>
+
+            <div class="sec-box">
+
+                <div
+                    id="secStatus"
+                    class="sec-status"
+                >
+                    SEC STATUS: --
+                </div>
+
+                <p
+                    id="ragContext"
+                    style="
+                        font-size:13px;
+                        color:#cbd5e1;
+                        line-height:1.6;
+                    "
+                >
+                </p>
+
+                <span
+                    id="ragAttribution"
+                    class="citation-tag"
+                >
+                    Attribution: --
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card col-6">
+
+            <h3>
+                Latest SEC Filing
+            </h3>
+
+            <div
+                id="secFilingInfo"
+                class="empty"
+            >
+                --
+            </div>
+
+        </div>
+
+
+        <div class="card col-6">
+
+            <h3>
+                Data Quality
+            </h3>
+
+            <div
+                id="dataQuality"
+                class="risk-list"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FINLENS LAB -->
+    <!-- ===================================================== -->
+
+    <div
+        id="labTab"
+        class="tab-content grid"
+    >
+
+        <div class="card col-12">
+
+            <h3>
+                🧪 Bull / Base / Bear Stress Lab
+            </h3>
+
+            <p
+                style="
+                    color:#94a3b8;
+                    font-size:12px;
+                "
+            >
+                Scenario outputs are transparent rule-based
+                estimates, not guaranteed price predictions.
+            </p>
+
+            <div
+                id="scenarioGrid"
+                class="scenario-grid"
+            ></div>
+
+        </div>
+
+
+        <div class="card col-6">
+
+            <h3>
+                🪪 Decision Passport
+            </h3>
+
+            <div
+                id="decisionPassport"
+                class="passport"
+            ></div>
+
+            <button
+                class="download-btn"
+                onclick="downloadPassport()"
+            >
+                Export Decision Passport
+            </button>
+
+        </div>
+
+
+        <div class="card col-6">
+
+            <h3>
+                🤖 Ask FinLens
+            </h3>
+
+            <p
+                style="
+                    color:#94a3b8;
+                    font-size:12px;
+                "
+            >
+                Ask questions about the current analysis.
+            </p>
+
+            <div class="chat-box">
+
+                <input
+                    type="text"
+                    id="chatQuestion"
+                    placeholder="Why is this stock risky?"
+                >
+
+                <button
+                    onclick="askFinLens()"
+                >
+                    Ask
+                </button>
+
+            </div>
+
+            <div
+                id="chatAnswer"
+                class="chat-answer"
+            >
+                Your FinLens answer will appear here.
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+let chartInstance = null;
+
+let latestData = null;
+
+
+/* ========================================================= */
+/* TAB SWITCHING */
+/* ========================================================= */
+
+function switchTab(tabId, button) {
+
+    document
+        .querySelectorAll(".tab-content")
+        .forEach(tab => {
+            tab.classList.remove("active");
+        });
+
+    document
+        .querySelectorAll(".tab-btn")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+    const target =
+        document.getElementById(tabId);
+
+    if (target) {
+        target.classList.add("active");
+    }
+
+    if (button) {
+        button.classList.add("active");
+    }
+}
+
+
+/* ========================================================= */
+/* HTML ESCAPE */
+/* ========================================================= */
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* ========================================================= */
+/* NUMBER FORMAT */
+/* ========================================================= */
+
+function money(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "--";
+    }
+
+    const number =
+        Number(value);
+
+    if (!Number.isFinite(number)) {
+        return "--";
+    }
+
+    return "$" +
+        number.toLocaleString(
+            undefined,
+            {
+                maximumFractionDigits: 2
+            }
+        );
+}
+
+
+function percent(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "--";
+    }
+
+    return `${value}%`;
+}
+
+
+function dash(value) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "--";
+    }
+
+    return value;
+}
+
+
+/* ========================================================= */
+/* MAIN ANALYSIS */
+/* ========================================================= */
+
+async function runAnalysis() {
+
+    const symbol =
+        document
+            .getElementById("symbol")
+            .value
+            .trim()
+            .toUpperCase();
+
+    const profile =
+        document
+            .getElementById("userProfile")
+            .value;
+
+    const horizon =
+        document
+            .getElementById("timeHorizon")
+            .value;
+
+    const capital =
+        parseFloat(
+            document
+                .getElementById("allocationAmount")
+                .value
+        ) || 10000;
+
+    const loader =
+        document.getElementById(
+            "loader"
+        );
+
+    const dashboard =
+        document.getElementById(
+            "dashboardContainer"
+        );
+
+
+    if (!symbol) {
+
+        alert(
+            "Please enter a stock ticker."
+        );
+
+        return;
+    }
+
+
+    loader.style.display =
+        "block";
+
+    dashboard.style.display =
+        "none";
+
+
+    try {
+
+        const url =
+            `http://127.0.0.1:8000/analyze/${encodeURIComponent(symbol)}` +
+            `?profile=${encodeURIComponent(profile)}` +
+            `&horizon=${encodeURIComponent(horizon)}` +
+            `&capital=${encodeURIComponent(capital)}`;
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            let errorMessage =
+                "Server communication failed.";
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+                if (errorData.detail) {
+                    errorMessage =
+                        errorData.detail;
+                }
+
+            } catch (_) {}
+
+            throw new Error(
+                errorMessage
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        latestData = data;
+
+
+        updateDashboard(data);
+
+
+        loader.style.display =
+            "none";
+
+        dashboard.style.display =
+            "block";
+
+
+    } catch (error) {
+
+        loader.style.display =
+            "none";
+
+        dashboard.style.display =
+            "none";
+
+
+        alert(
+            "Execution Error: " +
+            error.message
+        );
+
+        console.error(error);
+    }
+}
+
+
+/* ========================================================= */
+/* UPDATE DASHBOARD */
+/* ========================================================= */
+
+function updateDashboard(data) {
+
+    const company =
+        data.company || {};
+
+    const market =
+        data.market_data || {};
+
+    const analysis =
+        data.analysis || {};
+
+    const risk =
+        data.risk_engine || {};
+
+    const weather =
+        data.market_weather || {};
+
+    const dna =
+        data.financial_dna || {};
+
+
+    /* COMPANY */
+
+    document.getElementById(
+        "companyName"
+    ).innerText =
+        dash(company.name);
+
+
+    document.getElementById(
+        "companySymbol"
+    ).innerText =
+        data.ticker || "--";
+
+
+    document.getElementById(
+        "companyMeta"
+    ).innerText =
+        [
+            company.sector,
+            company.industry,
+            company.exchange
+        ]
+        .filter(Boolean)
+        .join(" · ") ||
+        "Company information";
+
+
+    /* DATA STATUS */
+
+    const dataStatus =
+        document.getElementById(
+            "dataStatus"
+        );
+
+
+    if (
+        data.is_degraded_data
+    ) {
+
+        dataStatus.innerHTML =
+            "⚠ FALLBACK MARKET DATA";
+
+        dataStatus.style.color =
+            "#ffcc00";
+
+    } else {
+
+        dataStatus.innerHTML =
+            '<span class="live-dot"></span> LIVE MARKET DATA';
+
+        dataStatus.style.color =
+            "#00ffaa";
+    }
+
+
+    /* SPIDER SENSE */
+
+    const spider =
+        analysis.spider_sense ??
+        analysis.confidence_score ??
+        0;
+
+
+    document.getElementById(
+        "spiderSense"
+    ).innerText =
+        spider;
+
+
+    document.getElementById(
+        "trustScore"
+    ).innerText =
+        `${analysis.trust_score ?? 0}%`;
+
+
+    document.getElementById(
+        "trustMini"
+    ).innerText =
+        `Trust: ${analysis.trust_score ?? 0}%`;
+
+
+    document.getElementById(
+        "consensusVal"
+    ).innerText =
+        analysis.agent_consensus ||
+        data.agent_debate?.consensus ||
+        "--";
+
+
+    document.getElementById(
+        "weatherVal"
+    ).innerText =
+        weather.condition ||
+        "--";
+
+
+    document.getElementById(
+        "senseRisk"
+    ).innerText =
+        analysis.risk_level ||
+        "--";
+
+
+    /* VERDICT */
+
+    const verdict =
+        analysis.verdict ||
+        "--";
+
+
+    const verdictElement =
+        document.getElementById(
+            "verdictText"
+        );
+
+
+    verdictElement.innerText =
+        verdict;
+
+
+    verdictElement.className =
+        "verdict-badge " +
+        getVerdictClass(verdict);
+
+
+    document.getElementById(
+        "confidenceVal"
+    ).innerText =
+        `${analysis.confidence_score ?? 0}%`;
+
+
+    document.getElementById(
+        "portfolioImpact"
+    ).innerText =
+        analysis.portfolio_impact ||
+        "";
+
+
+    /* MARKET */
+
+    document.getElementById(
+        "priceVal"
+    ).innerText =
+        money(
+            market.current_price
+        );
+
+
+    const change =
+        market.daily_change;
+
+
+    document.getElementById(
+        "changeVal"
+    ).innerText =
+        change === null ||
+        change === undefined
+            ? "--"
+            : `${change >= 0 ? "+" : ""}${change}%`;
+
+
+    document.getElementById(
+        "trendVal"
+    ).innerText =
+        market.trend ||
+        "--";
+
+
+    document.getElementById(
+        "sentimentVal"
+    ).innerText =
+        `${analysis.sentiment_score ?? 50} / 100`;
+
+
+    document.getElementById(
+        "rsiVal"
+    ).innerText =
+        dash(market.rsi);
+
+
+    document.getElementById(
+        "vixVal"
+    ).innerText =
+        market.volatility === undefined
+            ? "--"
+            : `${market.volatility}%`;
+
+
+    document.getElementById(
+        "drawdownVal"
+    ).innerText =
+        market.max_drawdown === undefined
+            ? "--"
+            : `${market.max_drawdown}%`;
+
+
+    document.getElementById(
+        "marketCapVal"
+    ).innerText =
+        company.market_cap_display ||
+        money(company.market_cap);
+
+
+    document.getElementById(
+        "peVal"
+    ).innerText =
+        dash(company.pe_ratio);
+
+
+    /* COMPANY */
+
+    document.getElementById(
+        "sectorVal"
+    ).innerText =
+        dash(company.sector);
+
+
+    document.getElementById(
+        "industryVal"
+    ).innerText =
+        dash(company.industry);
+
+
+    document.getElementById(
+        "countryVal"
+    ).innerText =
+        dash(company.country);
+
+
+    document.getElementById(
+        "employeesVal"
+    ).innerText =
+        company.employees
+            ? Number(
+                company.employees
+            ).toLocaleString()
+            : "--";
+
+
+    document.getElementById(
+        "exchangeVal"
+    ).innerText =
+        dash(company.exchange);
+
+
+    document.getElementById(
+        "revenueGrowthVal"
+    ).innerText =
+        percent(company.revenue_growth);
+
+
+    document.getElementById(
+        "earningsGrowthVal"
+    ).innerText =
+        percent(company.earnings_growth);
+
+
+    document.getElementById(
+        "profitMarginVal"
+    ).innerText =
+        percent(company.profit_margin);
+
+
+    document.getElementById(
+        "operatingMarginVal"
+    ).innerText =
+        percent(company.operating_margin);
+
+
+    document.getElementById(
+        "roeVal"
+    ).innerText =
+        percent(company.return_on_equity);
+
+
+    document.getElementById(
+        "forwardPeVal"
+    ).innerText =
+        dash(company.forward_pe);
+
+
+    document.getElementById(
+        "betaVal"
+    ).innerText =
+        dash(company.beta);
+
+
+    document.getElementById(
+        "dividendVal"
+    ).innerText =
+        percent(company.dividend_yield);
+
+
+    document.getElementById(
+        "high52Val"
+    ).innerText =
+        money(company["52_week_high"]);
+
+
+    document.getElementById(
+        "low52Val"
+    ).innerText =
+        money(company["52_week_low"]);
+
+
+    document.getElementById(
+        "targetVal"
+    ).innerText =
+        money(company.target_mean_price);
+
+
+    /* DESCRIPTION */
+
+    document.getElementById(
+        "companyDescription"
+    ).innerText =
+        company.description ||
+        "No company description was returned by the data provider.";
+
+
+    /* FINANCIAL DNA */
+
+    renderDNA(dna);
+
+
+    /* RED FLAGS */
+
+    renderRedFlags(
+        data.red_flags || []
+    );
+
+
+    /* AGENTS */
+
+    renderAgents(
+        analysis.chain_of_analysis ||
+        []
+    );
+
+
+    /* DEBATE */
+
+    renderDebate(
+        data.agent_debate
+    );
+
+
+    /* RISK */
+
+    renderRisk(
+        risk
+    );
+
+
+    /* SEC */
+
+    renderSEC(
+        data
+    );
+
+
+    /* NEWS */
+
+    renderNews(
+        data.news
+    );
+
+
+    /* SCENARIOS */
+
+    renderScenarios(
+        data.scenarios || []
+    );
+
+
+    /* DATA QUALITY */
+
+    renderDataQuality(
+        data.data_quality
+    );
+
+
+    /* DECISION PASSPORT */
+
+    renderPassport(
+        data.decision_passport
+    );
+
+
+    /* CHART */
+
+    renderChart(
+        market.chart_labels || [],
+        market.chart_prices || [],
+        market.sma_series || [],
+        market.sma_20
+    );
+
+
+    updateStressTest();
+}
+
+
+/* ========================================================= */
+/* VERDICT CLASS */
+/* ========================================================= */
+
+function getVerdictClass(verdict) {
+
+    const value =
+        String(verdict)
+            .toUpperCase();
+
+    if (
+        value.includes("BUY")
+    ) {
+
+        return value.includes(
+            "STRONG"
+        )
+            ? "STRONG"
+            : "BUY";
+    }
+
+
+    if (
+        value.includes("SELL") ||
+        value.includes("SHORT")
+    ) {
+
+        return value.includes(
+            "SHORT"
+        )
+            ? "SHORT"
+            : "SELL";
+    }
+
+
+    return "HOLD";
+}
+
+
+/* ========================================================= */
+/* FINANCIAL DNA */
+/* ========================================================= */
+
+function renderDNA(dna) {
+
+    const container =
+        document.getElementById(
+            "financialDNA"
+        );
+
+
+    const values = [
+
+        [
+            "Growth",
+            dna.growth
+        ],
+
+        [
+            "Profitability",
+            dna.profitability
+        ],
+
+        [
+            "Valuation",
+            dna.valuation
+        ],
+
+        [
+            "Return Profile",
+            dna.return_profile
+        ]
+
+    ];
+
+
+    container.innerHTML =
+        values.map(item => `
+
+            <div class="dna-card">
+
+                <small>
+                    ${escapeHtml(item[0])}
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        item[1] || "--"
+                    )}
+                </strong>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* ========================================================= */
+/* RED FLAGS */
+/* ========================================================= */
+
+function renderRedFlags(flags) {
+
+    const container =
+        document.getElementById(
+            "redFlags"
+        );
+
+
+    if (!flags.length) {
+
+        container.innerHTML =
+            `<div class="empty">
+                No automated red flags.
+            </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        flags.map(flag => `
+
+            <div
+                class="flag ${escapeHtml(
+                    flag.severity || "LOW"
+                )}"
+            >
+
+                <div class="flag-title">
+
+                    ${escapeHtml(
+                        flag.severity || "INFO"
+                    )}
+
+                    ·
+
+                    ${escapeHtml(
+                        flag.title
+                    )}
+
+                </div>
+
+                <div class="flag-detail">
+
+                    ${escapeHtml(
+                        flag.detail
+                    )}
+
+                </div>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* ========================================================= */
+/* AGENTS */
+/* ========================================================= */
+
+function renderAgents(chain) {
+
+    const container =
+        document.getElementById(
+            "agentChain"
+        );
+
+
+    if (!chain.length) {
+
+        container.innerHTML =
+            `<div class="empty">
+                Agent trace unavailable.
+            </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        chain.map(step => `
+
+            <div class="agent-step">
+
+                <div>
+
+                    <div class="agent-name">
+
+                        ${escapeHtml(
+                            step.agent
+                        )}
+
+                    </div>
+
+                    <div
+                        style="
+                            margin-top:7px;
+                            color:#cbd5e1;
+                            line-height:1.5;
+                        "
+                    >
+
+                        ${escapeHtml(
+                            step.output
+                        )}
+
+                    </div>
+
+                    <div
+                        class="agent-signal"
+                        style="
+                            color:#00ffaa;
+                        "
+                    >
+                        Evidence:
+                        ${escapeHtml(
+                            step.source
+                        )}
+                    </div>
+
+                </div>
+
+                <span class="citation-tag">
+
+                    Confidence:
+                    ${escapeHtml(
+                        step.confidence
+                    )}%
+
+                </span>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* ========================================================= */
+/* DEBATE */
+/* ========================================================= */
+
+function renderDebate(debate) {
+
+    const container =
+        document.getElementById(
+            "debateGrid"
+        );
+
+
+    if (
+        !debate ||
+        !debate.agents
+    ) {
+
+        container.innerHTML =
+            `<div class="empty">
+                Agent debate unavailable.
+            </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        debate.agents.map(agent => `
+
+            <div class="scenario">
+
+                <h4>
+                    ${escapeHtml(
+                        agent.agent
+                    )}
+                </h4>
+
+                <div
+                    style="
+                        color:#00ffaa;
+                        font-size:18px;
+                        font-weight:900;
+                    "
+                >
+
+                    ${escapeHtml(
+                        agent.stance
+                    )}
+
+                </div>
+
+                <div
+                    style="
+                        margin-top:7px;
+                        color:#ffcc00;
+                        font-size:11px;
+                    "
+                >
+
+                    Confidence:
+                    ${escapeHtml(
+                        Math.round(
+                            agent.confidence * 100
+                        )
+                    )}%
+
+                </div>
+
+                <p>
+
+                    ${escapeHtml(
+                        agent.argument
+                    )}
+
+                </p>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* ========================================================= */
+/* RISK */
+/* ========================================================= */
+
+function renderRisk(risk) {
+
+    document.getElementById(
+        "posSizeCalc"
+    ).innerText =
+        money(
+            risk.recommended_position_value
+        );
+
+
+    document.getElementById(
+        "allocationPct"
+    ).innerText =
+        `Recommended allocation: ${
+            risk.recommended_allocation_percent ?? 0
+        }%`;
+
+
+    const list =
+        document.getElementById(
+            "riskList"
+        );
+
+
+    list.innerHTML = `
+
+        <li>
+            Risk Level:
+            <strong>
+                ${escapeHtml(
+                    risk.risk_level || "--"
+                )}
+            </strong>
+        </li>
+
+        <li>
+            Risk Score:
+            <strong>
+                ${escapeHtml(
+                    risk.risk_points ?? "--"
+                )}
+            </strong>
+        </li>
+
+        <li>
+            Estimated Shares:
+            <strong>
+                ${escapeHtml(
+                    risk.estimated_shares ?? "--"
+                )}
+            </strong>
+        </li>
+
+        <li>
+            Stop Loss:
+            <strong>
+                ${escapeHtml(
+                    risk.stop_loss_percent ?? "--"
+                )}%
+                /
+                ${money(
+                    risk.stop_loss_price
+                )}
+            </strong>
+        </li>
+
+        <li>
+            Take Profit:
+            <strong>
+                ${escapeHtml(
+                    risk.take_profit_percent ?? "--"
+                )}%
+                /
+                ${money(
+                    risk.take_profit_price
+                )}
+            </strong>
+        </li>
+
+    `;
+}
+
+
+/* ========================================================= */
+/* SEC */
+/* ========================================================= */
+
+function renderSEC(data) {
+
+    const sec =
+        data.sec || {};
+
+    const filing =
+        sec.latest_filing;
+
+
+    const status =
+        document.getElementById(
+            "secStatus"
+        );
+
+
+    if (sec.available) {
+
+        status.innerText =
+            "SEC STATUS: VERIFIED";
+
+        status.style.color =
+            "#00ffaa";
+
+    } else {
+
+        status.innerText =
+            "SEC STATUS: UNAVAILABLE";
+
+        status.style.color =
+            "#ffcc00";
+    }
+
+
+    document.getElementById(
+        "ragContext"
+    ).innerText =
+        data.rag_corpus?.retrieved_text ||
+        "No SEC evidence returned.";
+
+
+    document.getElementById(
+        "ragAttribution"
+    ).innerText =
+        "Attribution: " +
+        (
+            data.rag_corpus?.source ||
+            "SEC EDGAR"
+        );
+
+
+    const filingContainer =
+        document.getElementById(
+            "secFilingInfo"
+        );
+
+
+    if (filing) {
+
+        filingContainer.innerHTML = `
+
+            <div
+                style="
+                    font-size:25px;
+                    font-weight:900;
+                    color:#0066ff;
+                "
+            >
+                ${escapeHtml(
+                    filing.form || "--"
+                )}
+            </div>
+
+            <div
+                style="
+                    margin-top:10px;
+                    color:#94a3b8;
+                    font-size:12px;
+                    line-height:1.8;
+                "
+            >
+
+                Filing Date:
+                <strong>
+                    ${escapeHtml(
+                        filing.filing_date || "--"
+                    )}
+                </strong>
+
+                <br>
+
+                Accession:
+                <strong>
+                    ${escapeHtml(
+                        filing.accession_number || "--"
+                    )}
+                </strong>
+
+            </div>
+        `;
+
+    } else {
+
+        filingContainer.innerText =
+            sec.reason ||
+            "No recent filing was identified.";
+    }
+}
+
+
+/* ========================================================= */
+/* NEWS */
+/* ========================================================= */
+
+function renderNews(news) {
+
+    const container =
+        document.getElementById(
+            "newsList"
+        );
+
+
+    if (
+        !news ||
+        !news.articles ||
+        !news.articles.length
+    ) {
+
+        container.innerHTML =
+            `<div class="empty">
+                No recent company news was returned.
+            </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        news.articles.map(article => {
+
+            const title =
+                escapeHtml(
+                    article.title ||
+                    "Untitled article"
+                );
+
+            const publisher =
+                escapeHtml(
+                    article.publisher ||
+                    "Financial News"
+                );
+
+
+            const url =
+                article.url;
+
+
+            if (url) {
+
+                return `
+
+                    <div class="news-item">
+
+                        <a
+                            href="${escapeHtml(url)}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            ${title}
+                        </a>
+
+                        <div class="news-publisher">
+
+                            ${publisher}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            return `
+
+                <div class="news-item">
+
+                    <div
+                        style="
+                            font-size:13px;
+                            font-weight:700;
+                        "
+                    >
+                        ${title}
+                    </div>
+
+                    <div class="news-publisher">
+                        ${publisher}
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+}
+
+
+/* ========================================================= */
+/* SCENARIOS */
+/* ========================================================= */
+
+function renderScenarios(scenarios) {
+
+    const container =
+        document.getElementById(
+            "scenarioGrid"
+        );
+
+
+    if (!scenarios.length) {
+
+        container.innerHTML =
+            `<div class="empty">
+                Scenario data unavailable.
+            </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        scenarios.map(scenario => `
+
+            <div class="scenario">
+
+                <h4>
+                    ${escapeHtml(
+                        scenario.name
+                    )}
+                </h4>
+
+                <div
+                    style="
+                        font-size:11px;
+                        color:#94a3b8;
+                    "
+                >
+
+                    Probability:
+                    ${escapeHtml(
+                        scenario.probability
+                    )}%
+
+                </div>
+
+                <div class="scenario-price">
+
+                    ${money(
+                        scenario.target_price
+                    )}
+
+                </div>
+
+                <div
+                    style="
+                        margin-top:6px;
+                        color:#00ffaa;
+                        font-size:12px;
+                        font-weight:800;
+                    "
+                >
+
+                    ${scenario.return_percent >= 0 ? "+" : ""}
+                    ${escapeHtml(
+                        scenario.return_percent
+                    )}%
+
+                </div>
+
+                <p>
+
+                    ${escapeHtml(
+                        scenario.thesis
+                    )}
+
+                </p>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* ========================================================= */
+/* DATA QUALITY */
+/* ========================================================= */
+
+function renderDataQuality(quality) {
+
+    const container =
+        document.getElementById(
+            "dataQuality"
+        );
+
+
+    if (!quality) {
+
+        container.innerHTML =
+            `<div class="empty">
+                --
+            </div>`;
+
+        return;
+    }
+
+
+    const entries = [
+
+        [
+            "Market Data",
+            quality.market_data
+        ],
+
+        [
+            "Company Data",
+            quality.company_data
+        ],
+
+        [
+            "News Data",
+            quality.news_data
+        ],
+
+        [
+            "SEC Data",
+            quality.sec_data
+        ],
+
+        [
+            "Trust Score",
+            `${quality.trust_score ?? 0}%`
+        ]
+
+    ];
+
+
+    container.innerHTML =
+        entries.map(item => `
+
+            <div
+                style="
+                    padding:8px 0;
+                    border-bottom:
+                        1px solid
+                        rgba(255,255,255,0.06);
+                    font-size:12px;
+                "
+            >
+
+                ${escapeHtml(item[0])}
+
+                <strong
+                    style="
+                        float:right;
+                        color:#00ffaa;
+                    "
+                >
+                    ${escapeHtml(item[1])}
+                </strong>
+
+            </div>
+
+        `).join("");
+}
+
+
+/* ========================================================= */
+/* DECISION PASSPORT */
+/* ========================================================= */
+
+function renderPassport(passport) {
+
+    const container =
+        document.getElementById(
+            "decisionPassport"
+        );
+
+
+    if (!passport) {
+
+        container.innerHTML =
+            "No passport generated.";
+
+        return;
+    }
+
+
+    container.innerHTML = `
+
+        <div class="passport-row">
+
+            <div class="passport-item">
+
+                <small>
+                    Company
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.company
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Ticker
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.ticker
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Decision
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.verdict
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Spider Sense
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.spider_sense
+                    )}/100
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Profile
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.profile
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Horizon
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.horizon
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Risk
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.risk_level
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div class="passport-item">
+
+                <small>
+                    Trust
+                </small>
+
+                <strong>
+                    ${escapeHtml(
+                        passport.trust_score
+                    )}%
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div
+            style="
+                color:#94a3b8;
+                font-size:10px;
+            "
+        >
+            Generated:
+            ${escapeHtml(
+                passport.timestamp
+            )}
+        </div>
+
+    `;
+}
+
+
+/* ========================================================= */
+/* CHART */
+/* ========================================================= */
+
+function renderChart(
+    labels,
+    prices,
+    smaSeries,
+    fallbackSma
+) {
+
+    const canvas =
+        document.getElementById(
+            "priceChart"
+        );
+
+
+    if (!canvas) {
+        return;
+    }
+
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    if (chartInstance) {
+
+        chartInstance.destroy();
+
+        chartInstance = null;
+    }
+
+
+    if (!labels.length) {
+        return;
+    }
+
+
+    let smaData =
+        smaSeries;
+
+
+    if (
+        !smaData ||
+        !smaData.length
+    ) {
+
+        smaData =
+            Array(labels.length)
+                .fill(fallbackSma);
+    }
+
+
+    chartInstance =
+        new Chart(
+            ctx,
+            {
+
+                type: "line",
+
+                data: {
+
+                    labels: labels,
+
+                    datasets: [
+
+                        {
+
+                            label:
+                                "Stock Price ($)",
+
+                            data: prices,
+
+                            borderColor:
+                                "#e62429",
+
+                            backgroundColor:
+                                "rgba(230,36,41,0.08)",
+
+                            borderWidth: 2,
+
+                            fill: true,
+
+                            tension: 0.25,
+
+                            pointRadius: 0
+
+                        },
+
+                        {
+
+                            label:
+                                "20-Day SMA",
+
+                            data: smaData,
+
+                            borderColor:
+                                "#0066ff",
+
+                            borderWidth: 2,
+
+                            borderDash:
+                                [5, 5],
+
+                            fill: false,
+
+                            tension: 0.15,
+
+                            pointRadius: 0
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    interaction: {
+
+                        intersect: false,
+
+                        mode: "index"
+
+                    },
+
+                    plugins: {
+
+                        legend: {
+
+                            labels: {
+
+                                color:
+                                    "#f8fafc"
+
+                            }
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        x: {
+
+                            ticks: {
+
+                                color:
+                                    "#94a3b8",
+
+                                maxTicksLimit: 12
+
+                            },
+
+                            grid: {
+
+                                color:
+                                    "rgba(255,255,255,0.04)"
+
+                            }
+
+                        },
+
+                        y: {
+
+                            ticks: {
+
+                                color:
+                                    "#94a3b8"
+
+                            },
+
+                            grid: {
+
+                                color:
+                                    "rgba(255,255,255,0.04)"
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+}
+
+
+/* ========================================================= */
+/* STRESS TEST */
+/* ========================================================= */
+
+function updateStressTest() {
+
+    const slider =
+        document.getElementById(
+            "stressSlider"
+        );
+
+
+    const percentLoss =
+        Number(
+            slider.value
+        );
+
+
+    document.getElementById(
+        "stressPercent"
+    ).innerText =
+        `-${percentLoss}%`;
+
+
+    if (!latestData) {
+
+        document.getElementById(
+            "stressResult"
+        ).innerText =
+            "Potential loss: $0";
+
+        return;
+    }
+
+
+    const position =
+        Number(
+            latestData.risk_engine
+                ?.recommended_position_value
+        ) || 0;
+
+
+    const loss =
+        position *
+        percentLoss /
+        100;
+
+
+    document.getElementById(
+        "stressResult"
+    ).innerText =
+        `Potential loss: ${money(loss)}`;
+}
+
+
+/* ========================================================= */
+/* DECISION PASSPORT DOWNLOAD */
+/* ========================================================= */
+
+function downloadPassport() {
+
+    if (!latestData) {
+
+        alert(
+            "Analyze a company first."
+        );
+
+        return;
+    }
+
+
+    const passport =
+        latestData.decision_passport ||
+        {};
+
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    passport,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+    link.download =
+        `${latestData.ticker}_FinLens_Decision_Passport.json`;
+
+
+    document.body.appendChild(
+        link
+    );
+
+    link.click();
+
+    document.body.removeChild(
+        link
+    );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+}
+
+
+/* ========================================================= */
+/* ASK FINLENS */
+/* ========================================================= */
+
+function askFinLens() {
+
+    const question =
+        document
+            .getElementById(
+                "chatQuestion"
+            )
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    const answer =
+        document.getElementById(
+            "chatAnswer"
+        );
+
+
+    if (!latestData) {
+
+        answer.innerText =
+            "Analyze a company first.";
+
+        return;
+    }
+
+
+    const data =
+        latestData;
+
+    const company =
+        data.company || {};
+
+    const market =
+        data.market_data || {};
+
+    const analysis =
+        data.analysis || {};
+
+    const risk =
+        data.risk_engine || {};
+
+
+    let response =
+        "FinLens: ";
+
+
+    if (
+        question.includes("risk") ||
+        question.includes("risky")
+    ) {
+
+        response +=
+            `The current automated risk level for ` +
+            `${data.ticker} is ` +
+            `${analysis.risk_level || "unknown"}. ` +
+            `Observed volatility is ` +
+            `${market.volatility ?? "unknown"}% ` +
+            `and maximum drawdown is ` +
+            `${market.max_drawdown ?? "unknown"}%.`;
+
+    }
+
+    else if (
+        question.includes("buy") ||
+        question.includes("decision") ||
+        question.includes("recommend")
+    ) {
+
+        response +=
+            `The current profile-adjusted decision ` +
+            `is ${analysis.verdict}. ` +
+            `Spider Sense is ` +
+            `${analysis.spider_sense ?? analysis.confidence_score}/100 ` +
+            `with a trust score of ` +
+            `${analysis.trust_score ?? 0}%.`;
+
+    }
+
+    else if (
+        question.includes("fundamental") ||
+        question.includes("company") ||
+        question.includes("business")
+    ) {
+
+        response +=
+            `${company.name || data.ticker} ` +
+            `operates in ` +
+            `${company.industry || "an unspecified industry"}. ` +
+            `Revenue growth is ` +
+            `${company.revenue_growth ?? "unavailable"}% ` +
+            `and P/E is ` +
+            `${company.pe_ratio ?? "unavailable"}.`;
+
+    }
+
+    else if (
+        question.includes("sentiment") ||
+        question.includes("news")
+    ) {
+
+        response +=
+            `Recent news sentiment is ` +
+            `${analysis.sentiment_score ?? 50}/100. ` +
+            `The dashboard retrieved ` +
+            `${data.news?.articles?.length || 0} ` +
+            `recent news items.`;
+
+    }
+
+    else if (
+        question.includes("how much") ||
+        question.includes("allocation") ||
+        question.includes("position")
+    ) {
+
+        response +=
+            `The current risk engine suggests a position ` +
+            `of ${money(
+                risk.recommended_position_value
+            )}, representing ` +
+            `${risk.recommended_allocation_percent ?? 0}% ` +
+            `of the supplied capital.`;
+
+    }
+
+    else {
+
+        response +=
+            `${data.ticker} currently has a ` +
+            `${analysis.agent_consensus || "mixed"} ` +
+            `agent consensus, a Spider Sense score of ` +
+            `${analysis.spider_sense ?? analysis.confidence_score}/100, ` +
+            `and a ${analysis.risk_level || "unknown"} risk level.`;
+
+    }
+
+
+    answer.innerText =
+        response;
+}
+
+
+/* ========================================================= */
+/* ENTER KEY SHORTCUTS */
+/* ========================================================= */
+
+document
+    .getElementById("symbol")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                runAnalysis();
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById("chatQuestion")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                askFinLens();
+
+            }
+
+        }
+    );
+
+
+/* ========================================================= */
+/* AUTO LOAD AAPL */
+/* ========================================================= */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        runAnalysis();
+
+    }
+);
+
+</script>
+
+</body>
+</html>

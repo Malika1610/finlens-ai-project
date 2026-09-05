@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinLens AI | Spidey Web Multi-Agent Engine 🕷️</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-main: #05070f;
+            --bg-card: rgba(12, 18, 34, 0.92);
+            --bg-dark: #080c18;
+            --border-color: rgba(230, 36, 41, 0.4);
+            --accent-red: #e62429;
+            --accent-blue: #0066ff;
+            --accent-gold: #ffcc00;
+            --accent-web: #e2e8f0;
+            --accent-green: #00ffaa;
+            --text-primary: #f8fafc;
+            --text-muted: #94a3b8;
+            --box-shadow: 0 0 15px rgba(230, 36, 41, 0.25);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(230, 36, 41, 0.12) 0%, transparent 60%),
+                repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 40px, rgba(0, 102, 255, 0.06) 41px, transparent 42px),
+                linear-gradient(0deg, transparent 49%, rgba(230, 36, 41, 0.04) 50%, transparent 51%),
+                linear-gradient(90deg, transparent 49%, rgba(230, 36, 41, 0.04) 50%, transparent 51%);
+            background-size: 100% 100%, 300px 300px, 80px 80px, 80px 80px;
+            color: var(--text-primary);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--accent-red);
+            box-shadow: 0 4px 20px rgba(230, 36, 41, 0.3);
+        }
+
+        .brand { 
+            font-size: 26px; 
+            font-weight: 900; 
+            color: #ffffff; 
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(230, 36, 41, 0.8);
+        }
+        .brand span { color: var(--accent-blue); text-shadow: 0 0 10px rgba(0, 102, 255, 0.8); }
+
+        .tag {
+            background: rgba(255, 204, 0, 0.15);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-left: 6px;
+        }
+
+        .problem-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .problem-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--box-shadow);
+        }
+        .problem-card h4 { margin: 0 0 8px 0; color: var(--accent-red); font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .problem-card p { margin: 0; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+        .controls-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 4px; }
+        .input-group label { font-size: 11px; color: var(--accent-gold); font-weight: 700; text-transform: uppercase; }
+
+        input[type="text"], input[type="number"], select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-dark);
+            color: white;
+            font-size: 13px;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: var(--accent-red); box-shadow: 0 0 8px rgba(230, 36, 41, 0.5); }
+
+        button {
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #e62429, #990000);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 12px rgba(230, 36, 41, 0.5);
+            text-transform: uppercase;
+        }
+        button:hover { opacity: 0.95; box-shadow: 0 0 20px rgba(230, 36, 41, 0.8); }
+
+        .tabs-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .tab-btn {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: none;
+        }
+        .tab-btn.active {
+            background: var(--accent-red);
+            color: white;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 10px rgba(230, 36, 41, 0.5);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: grid; }
+
+        .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; backdrop-filter: blur(8px); }
+
+        .col-4 { grid-column: span 4; }
+        .col-6 { grid-column: span 6; }
+        .col-8 { grid-column: span 8; }
+        .col-12 { grid-column: span 12; }
+
+        .verdict-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 16px;
+            border-left: 6px solid var(--accent-green);
+        }
+
+        .verdict-badge { font-size: 28px; font-weight: 900; }
+        .BUY { color: var(--accent-green); text-shadow: 0 0 10px rgba(0, 255, 170, 0.5); }
+        .SELL { color: var(--accent-red); text-shadow: 0 0 10px rgba(230, 36, 41, 0.5); }
+
+        .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+        .metric-card { background: var(--bg-dark); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .metric-title { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .metric-val { font-size: 16px; font-weight: bold; margin-top: 4px; color: white; }
+
+        .agent-flow { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .agent-step { 
+            background: var(--bg-dark); 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            border-left: 3px solid var(--accent-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .citation-tag {
+            background: rgba(0, 102, 255, 0.2);
+            color: var(--accent-web);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 102, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="brand">FinLens <span>Spider Web Engine</span> 🕷️</div>
+    <button onclick="runAnalysis()">Thwip Radar ⚡</button>
+</div>
+
+<div class="problem-section">
+    <div class="problem-card">
+        <h4>1. Disconnected Market Data</h4>
+        <p>Traditional tools evaluate technical momentum, sentiment, and fundamental reports in isolation, missing crucial cross-indicator signals.</p>
+    </div>
+    <div class="problem-card">
+        <h4>2. SEC Citation Hallucinations</h4>
+        <p>Standard LLM models frequently generate false regulatory stats without explicit retrieval-augmented grounding from authentic SEC disclosures.</p>
+    </div>
+    <div class="problem-card">
+        <h4>3. Static Risk Profiling</h4>
+        <p>Fixed algorithms ignore dynamic personal parameters like capital limits, time horizons, and real-time market volatility adjustments.</p>
+    </div>
+</div>
+
+<div class="controls-panel">
+    <div class="controls-row">
+        <div class="input-group">
+            <label>Ticker Symbol</label>
+            <input type="text" id="symbol" value="AAPL" style="width: 90px;" />
+        </div>
+
+        <div class="input-group">
+            <label>Risk Profile <span class="tag">Persona</span></label>
+            <select id="userProfile">
+                <option value="Conservative">Conservative (Low Risk)</option>
+                <option value="Moderate" selected>Moderate Growth</option>
+                <option value="Aggressive">Aggressive (High Risk)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Investment Horizon</label>
+            <select id="timeHorizon">
+                <option value="Short-Term">Short-Term (1-30 Days)</option>
+                <option value="Swing" selected>Swing (1-6 Months)</option>
+                <option value="Long-Term">Long-Term (1+ Years)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Target Capital ($)</label>
+            <input type="number" id="allocationAmount" value="10000" style="width: 110px;" />
+        </div>
+    </div>
+</div>
+
+<div id="loader" style="display: none; text-align: center; padding: 40px; color: var(--accent-gold);">
+    <em>🕷️ Weaving web threads across technical, sentiment, and fundamental RAG agents...</em>
+</div>
+
+<div id="dashboardContainer" style="display: none;">
+    <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('overviewTab')">Executive Overview</button>
+        <button class="tab-btn" onclick="switchTab('agentsTab')">Multi-Agent Web Trace</button>
+        <button class="tab-btn" onclick="switchTab('riskTab')">Risk & Sizing Engine</button>
+        <button class="tab-btn" onclick="switchTab('ragTab')">SEC RAG Grounding</button>
+    </div>
+
+    <div id="overviewTab" class="tab-content active grid">
+        <div class="card col-6">
+            <h3>Consensus Decision Engine</h3>
+            <div class="verdict-box">
+                <div>
+                    <div style="font-size: 11px; color: var(--text-muted);">RECOMMENDED ACTION</div>
+                    <div id="verdictText" class="verdict-badge BUY">BUY</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; color: var(--text-muted);">CONFIDENCE RATING</div>
+                    <div id="confidenceVal" style="font-size: 24px; font-weight: bold; color: var(--accent-blue);">88%</div>
+                </div>
+            </div>
+            <p id="portfolioImpact" style="font-size: 13px; margin-top: 14px; color: var(--text-muted); line-height: 1.5;"></p>
+        </div>
+
+        <div class="card col-6">
+            <h3>Multi-Signal Dashboard Points</h3>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Technical Trend</div>
+                    <div id="trendVal" class="metric-val" style="color: var(--accent-green);">Bullish</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Sentiment Score</div>
+                    <div id="sentimentVal" class="metric-val" style="color: var(--accent-blue);">78 / 100</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Risk Level</div>
+                    <div id="riskVal" class="metric-val" style="color: var(--accent-gold);">Moderate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">RSI (14-Day)</div>
+                    <div id="rsiVal" class="metric-val">58.4</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">VIX Volatility</div>
+                    <div id="vixVal" class="metric-val">16.2</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Max Drawdown</div>
+                    <div id="drawdownVal" class="metric-val" style="color: var(--accent-red);">-4.2%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card col-12">
+            <h3>Price Action & Moving Average Overlay</h3>
+            <canvas id="priceChart" height="90"></canvas>
+        </div>
+    </div>
+
+    <div id="agentsTab" class="tab-content grid">
+        <div class="card col-12">
+            <h3>Multi-Agent Decision Web Trace</h3>
+            <p style="font-size: 12px; color: var(--text-muted);">Real-time breakdown of individual agent scoring outputs.</p>
+            <div id="agentChain" class="agent-flow"></div>
+        </div>
+    </div>
+
+    <div id="riskTab" class="tab-content grid">
+        <div class="card col-6">
+            <h3>Recommended Allocation Sizing</h3>
+            <div style="font-size: 32px; font-weight: 900; color: var(--accent-green); margin-top: 10px;" id="posSizeCalc">$0</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">Calculated using current capital input, risk tier parameters, and market volatility score.</p>
+        </div>
+        <div class="card col-6">
+            <h3>Risk Mitigation Checks</h3>
+            <ul style="font-size: 13px; color: var(--text-muted); line-height: 2; margin: 0; padding-left: 20px;">
+                <li>Stop-Loss Threshold: <strong style="color: white;">-3.5%</strong></li>
+                <li>Take-Profit Target: <strong style="color: white;">+8.2%</strong></li>
+                <li>Portfolio Exposure Cap: <strong style="color: white;">15% Max Single Asset</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="ragTab" class="tab-content grid">
+        <div class="card col-12">
+            <h3>Retrieved Regulatory Disclosures (SEC 10-K RAG)</h3>
+            <div style="background: var(--bg-dark); border: 1px dashed var(--accent-red); padding: 16px; border-radius: 8px; margin-top: 10px;">
+                <p id="ragContext" style="font-size: 13px; color: #cbd5e1; margin: 0 0 10px 0;"></p>
+                <span id="ragAttribution" class="citation-tag">Attribution: SEC Filing Vector Database</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let chartInstance = null;
+
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+async function runAnalysis() {
+    const symbol = document.getElementById("symbol").value.trim();
+    const profile = document.getElementById("userProfile").value;
+    const allocation = parseFloat(document.getElementById("allocationAmount").value) || 10000;
+    const loader = document.getElementById("loader");
+    const dash = document.getElementById("dashboardContainer");
+
+    if (!symbol) return alert("Enter stock ticker!");
+
+    loader.style.display = "block";
+    dash.style.display = "none";
+
+    try {
+        const res = await fetch(`http://127.0.0.1:8000/analyze/${symbol}?profile=${profile}`);
+        if (!res.ok) throw new Error("Server communication failed.");
+
+        const data = await res.json();
+
+        document.getElementById("verdictText").innerText = data.analysis.verdict;
+        document.getElementById("verdictText").className = `verdict-badge ${data.analysis.verdict}`;
+        document.getElementById("confidenceVal").innerText = `${data.analysis.confidence_score}%`;
+        document.getElementById("portfolioImpact").innerText = data.analysis.portfolio_impact;
+
+        document.getElementById("trendVal").innerText = data.market_data.trend;
+        document.getElementById("sentimentVal").innerText = `${data.analysis.sentiment_score} / 100`;
+        document.getElementById("riskVal").innerText = data.analysis.risk_level;
+
+        const riskPct = profile === "Conservative" ? 0.15 : (profile === "Moderate" ? 0.35 : 0.60);
+        document.getElementById("posSizeCalc").innerText = `$${Math.round(allocation * riskPct).toLocaleString()}`;
+
+        document.getElementById("ragContext").innerText = `"${data.rag_corpus.retrieved_text}"`;
+        document.getElementById("ragAttribution").innerText = `Attribution: ${data.rag_corpus.source}`;
+
+        document.getElementById("agentChain").innerHTML = data.analysis.chain_of_analysis.map(step => `
+            <div class="agent-step">
+                <div>
+                    <strong>${step.agent}:</strong> ${step.output}
+                </div>
+                <span class="citation-tag">Confidence: ${step.confidence}%</span>
+            </div>
+        `).join('');
+
+        renderChart(data.market_data.chart_labels, data.market_data.chart_prices, data.market_data.sma_20);
+
+        loader.style.display = "none";
+        dash.style.display = "block";
+
+    } catch (err) {
+        loader.style.display = "none";
+        alert("Execution Error: " + err.message);
+    }
+}
+
+function renderChart(labels, prices, sma) {
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'Stock Price ($)', data: prices, borderColor: '#e62429', borderWidth: 2, fill: false },
+                { label: '20-Day SMA', data: Array(labels.length).fill(sma), borderColor: '#0066ff', borderDash: [4, 4] }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { labels: { color: '#f8fafc' } } },
+            scales: {
+                x: { ticks: { color: '#94a3b8' } },
+                y: { ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+}
+</script>
+</body>
+</html>
